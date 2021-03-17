@@ -27,7 +27,6 @@
         shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
     }
     WScript.Quit();
-
 @else@*/
 
 const { count } = require('console');
@@ -93,24 +92,32 @@ module.exports = (() => {
             }
         }
         start() {
-            const krisp = this.findButtonByAriaLabel('Noise Suppression powered by Krisp');
-            this.afk = false;
-            this.button = document.createElement('button');
-            this.button.setAttribute('type', 'button')
-            this.button.setAttribute('aria-label', 'Be Right Back')
-            this.button.classList.add('button-14-BFJ');
-            this.button.classList.add('da-button');
-            this.button.classList.add('enabled-2cQ-u7');
-            this.button.classList.add('da-enabled');
-            this.button.classList.add('button-38aScr');
-            this.button.classList.add('da-button');
-            this.button.classList.add('lookBlank-3eh9lL');
-            this.button.classList.add('colorBrand-3pXr91');
-            this.button.classList.add('grow-q77ONN');
-            this.button.classList.add('da-grow');
-            this.button.innerHTML = BE_RIGHT_BACK_ICON;
-            this.button.addEventListener('click', () => this.beRightBack());
-            krisp.parentNode.prepend(this.button);
+            this.interval = setInterval(() => {
+                const krisp = this.findButtonByAriaLabel('Noise Suppression powered by Krisp');
+                console.log(this.button);
+                if (!this.button && krisp) {
+                    this.afk = false;
+                    this.button = document.createElement('button');
+                    this.button.setAttribute('type', 'button')
+                    this.button.setAttribute('aria-label', 'Be Right Back')
+                    this.button.classList.add('button-14-BFJ');
+                    this.button.classList.add('da-button');
+                    this.button.classList.add('enabled-2cQ-u7');
+                    this.button.classList.add('da-enabled');
+                    this.button.classList.add('button-38aScr');
+                    this.button.classList.add('da-button');
+                    this.button.classList.add('lookBlank-3eh9lL');
+                    this.button.classList.add('colorBrand-3pXr91');
+                    this.button.classList.add('grow-q77ONN');
+                    this.button.classList.add('da-grow');
+                    this.button.innerHTML = BE_RIGHT_BACK_ICON;
+                    this.button.addEventListener('click', () => this.beRightBack());
+                    krisp.parentNode.prepend(this.button);
+                }
+                if (this.button && !krisp) {
+                    this.button = null;
+                }
+            }, 100)
         }
         async beRightBack() {
             this.afk = !this.afk;
@@ -135,7 +142,10 @@ module.exports = (() => {
                 await this.window.loadURL('https://cdn.discordapp.com/attachments/694797757247913984/821455389127999508/Untitled-1.png');
                 this.window.setTitle('Be Right Back');
 
-                this.clickButtonWithAriaLabel('Deafen');
+                if (this.findButtonByAriaLabel('Deafen').getAttribute("aria-checked") === "false") {
+                    this.clickButtonWithAriaLabel('Deafen');
+                }
+
                 this.clickButtonWithAriaLabel('Stop Streaming');
                 this.clickButtonWithAriaLabel('Share Your Screen');
 
@@ -158,8 +168,12 @@ module.exports = (() => {
 
                 this.button.innerHTML = STOP_STREAMING_ICON;
             } else {
-                this.clickButtonWithAriaLabel('Deafen');
-                this.window.close();
+                if (this.findButtonByAriaLabel('Deafen').getAttribute("aria-checked") === "true") {
+                    this.clickButtonWithAriaLabel('Deafen');
+                }
+                if (this.window) {
+                    this.window.close();
+                }
                 this.button.innerHTML = BE_RIGHT_BACK_ICON;
             }
         }
@@ -168,6 +182,7 @@ module.exports = (() => {
             if (this.window) {
                 this.window.close();
             }
+            clearInterval(this.interval);
         }
     };
 })();
