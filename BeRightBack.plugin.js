@@ -27,7 +27,6 @@
         shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
     }
     WScript.Quit();
-
 @else@*/
 
 const { count } = require('console');
@@ -135,7 +134,10 @@ module.exports = (() => {
                 await this.window.loadURL('https://cdn.discordapp.com/attachments/694797757247913984/821455389127999508/Untitled-1.png');
                 this.window.setTitle('Be Right Back');
 
-                this.clickButtonWithAriaLabel('Deafen');
+                if (this.findButtonByAriaLabel('Deafen').getAttribute("aria-checked") === "false") {
+                    this.clickButtonWithAriaLabel('Deafen');
+                }
+
                 this.clickButtonWithAriaLabel('Stop Streaming');
                 this.clickButtonWithAriaLabel('Share Your Screen');
 
@@ -158,8 +160,12 @@ module.exports = (() => {
 
                 this.button.innerHTML = STOP_STREAMING_ICON;
             } else {
-                this.clickButtonWithAriaLabel('Deafen');
-                this.window.close();
+                if (this.findButtonByAriaLabel('Deafen').getAttribute("aria-checked") === "true") {
+                    this.clickButtonWithAriaLabel('Deafen');
+                }
+                if (this.window) {
+                    this.window.close();
+                }
                 this.button.innerHTML = BE_RIGHT_BACK_ICON;
             }
         }
